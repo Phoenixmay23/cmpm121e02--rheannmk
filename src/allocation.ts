@@ -7,10 +7,28 @@ const readout = document.querySelector<HTMLParagraphElement>(
 )!;
 let producers = 2;
 
-function u() {
-  const production = producers * 3; //production
-  const consumption = 6; //consumption
-  const balance = production - consumption; //balance
+//render rectangle function
+function display_graph(
+  color: string,
+  text: string,
+  amount: number,
+  text_position: number,
+  text_style: string,
+) {
+  ctx.fillStyle = "#233e43";
+  ctx.font = text_style;
+  ctx.fillText(`${text}: ${amount}`, 18, text_position);
+  ctx.fillStyle = color;
+  ctx.fillRect(18, text_position + 8, amount * 14, 20);
+}
+
+function update() {
+  //calc new production, consumption and balance values based on new producer count
+  const production = producers * 3;
+  const consumption = 6;
+  const balance = production - consumption;
+
+  //render producer rectangles
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (let i = 0; i < 6; i++) {
     ctx.fillStyle = i < producers ? "#27766b" : "#c9d2c9";
@@ -19,16 +37,13 @@ function u() {
     ctx.font = "16px system-ui";
     ctx.fillText(String(i + 1), 31 + i * 45, 40);
   }
+
+  //render producer/consumer bars, text, and summary text
   ctx.fillStyle = "#233e43";
   ctx.font = "14px system-ui";
   ctx.fillText(`Producers: ${producers} / 6`, 18, 76);
-  ctx.fillText(`Production: ${production}`, 18, 102);
-  ctx.fillStyle = "#27766b";
-  ctx.fillRect(18, 110, production * 14, 20);
-  ctx.fillStyle = "#233e43";
-  ctx.fillText(`Consumption: ${consumption}`, 18, 154);
-  ctx.fillStyle = "#a44d23";
-  ctx.fillRect(18, 162, consumption * 14, 20);
+  display_graph("#27766b", "Production", production, 102, "14px system-ui");
+  display_graph("#a44d23", "Consumption", consumption, 154, "14px system-ui");
   readout.textContent =
     `Assigned: ${producers}/6 · Production: ${production} · Consumption: ${consumption} · Balance: ${
       balance > 0 ? "+" : ""
@@ -37,15 +52,15 @@ function u() {
 
 document.querySelector<HTMLButtonElement>("#allocation-less")!.onclick = () => {
   producers = Math.max(0, producers - 1);
-  u();
+  update();
 };
 document.querySelector<HTMLButtonElement>("#allocation-more")!.onclick = () => {
   producers = Math.min(6, producers + 1);
-  u();
+  update();
 };
 document.querySelector<HTMLButtonElement>("#allocation-reset")!.onclick =
   () => {
     producers = 2;
-    u();
+    update();
   };
-u();
+update();
