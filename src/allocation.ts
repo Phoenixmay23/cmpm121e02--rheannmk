@@ -7,6 +7,7 @@ const readout = document.querySelector<HTMLParagraphElement>(
 )!;
 let producers = 2;
 let maxProducers = 6;
+const startingY = 102;
 
 //render rectangle function
 function display_graph(
@@ -19,6 +20,13 @@ function display_graph(
   ctx.fillText(`${text}: ${amount}`, 18, text_position);
   ctx.fillStyle = color;
   ctx.fillRect(18, text_position + 8, amount * 14, 20);
+}
+
+//record structure
+interface record {
+  text: string;
+  color: string;
+  amount: number;
 }
 
 function update() {
@@ -37,12 +45,32 @@ function update() {
     ctx.fillText(String(i + 1), 31 + i * 45, 40);
   }
 
+  //records list
+  const records: record[] = [
+    {
+      text: "Production",
+      color: "#27766b",
+      amount: production,
+    },
+    {
+      text: "Consumption",
+      color: "#a44d23",
+      amount: consumption,
+    },
+  ];
+
   //render producer/consumer bars, text, and summary text
   ctx.fillStyle = "#233e43";
   ctx.font = "14px system-ui";
   ctx.fillText(`Producers: ${producers} / ${maxProducers}`, 18, 76);
-  display_graph("#27766b", "Production", production, 102);
-  display_graph("#a44d23", "Consumption", consumption, 154);
+  for (let i = 0; i < records.length; i++) {
+    display_graph(
+      records[i].color,
+      records[i].text,
+      records[i].amount,
+      startingY + i * 52,
+    );
+  }
   readout.textContent =
     `Assigned: ${producers}/${maxProducers} · Production: ${production} · Consumption: ${consumption} · Balance: ${
       balance > 0 ? "+" : ""
